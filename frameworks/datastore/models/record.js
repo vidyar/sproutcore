@@ -408,6 +408,15 @@ SC.Record = SC.Object.extend(
   // ATTRIBUTES
   //
 
+  /*
+    Returns a hash of the record's class's record attributes.
+
+    @returns {Hash} record attributes
+  */
+  recordAttributes: function() {
+    return this.constructor.recordAttributes();
+  }.property(),
+
   /** @private
     Current edit level.  Used to defer editing changes.
   */
@@ -1500,10 +1509,56 @@ SC.Record.mixin( /** @scope SC.Record */ {
     return store.find(this, id);
   },
 
-  /** @private - enhance extend to notify SC.Query as well. */
+  /*
+    Returns a list of the model class's record attributes.
+
+    @returns {Hash} record attributes list
+  */
+  recordAttributes: function() {
+    if (this._screc_recordAttributes) return SC.clone(this._screc_recordAttributes);
+    else return this._screc_recordAttributes = this._screc_generateRecordAttributes();
+  },
+
+
+  /* @private - Cache of record attributes. */
+  _screc_recordAttributes: null,
+
+  /* @private - expose attributes at the class level for introspection. */
+  _screc_generateRecordAttributes: function() {
+    var recordAttributes = {};
+
+    var key, value;
+    for (property in this.prototype) {
+      value = this.prototype[property];
+      // If the property is an attribute, add it to recordAttributes.
+      if (value && value.isRecordAttribute) {
+        recordAttributes[property] = value;
+      }
+    }
+
+    return recordAttributes;
+  },
+  /* @private - Invalidates record attribute cache here and on all subclasses. */
+  _screc_invalidateRecordAttributes: function() {
+    // Invalidate here.
+    this._screc_recordAttributes = null;
+    // Invalidate on all subclasses.
+    this.subclasses.forEach(function(subclass) {
+      subclass._screc_invalidateRecordAttributes();
+    });
+  },
+
+  /* @private - Extended to clear record attribute cache from subclass. */
   extend: function() {
-    var ret = SC.Object.extend.apply(this, arguments);
+    var ret = SC.Object.extend.apply(this, Array.prototype.slice.apply(arguments));
+    ret._screc_invalidateRecordAttributes();
     if(SC.Query) SC.Query._scq_didDefineRecordType(ret);
-    return ret ;
-  }
-});
+    return ret;
+  },
+  /* @private - Extended to clear record attribute cache from subclass. */
+  reopen: function() {
+    var ret = SC.Object.reopen.apply(this, Array.prototype.slice.apply(arguments));
+    this._screc_invalidateRecordAttributes();
+    return ret;
+  },
+}) ;
