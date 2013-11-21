@@ -773,8 +773,8 @@ SC.TreeItemObserver = SC.Object.extend(SC.Array, SC.CollectionContent, {
       treeItemChildrenKey = this.get('treeItemChildrenKey');
 
     if (cachedItem) {
-      cachedItem.removeObserver(treeItemIsExpandedKey, this, this._itemIsExpandedDidChange);
-      cachedItem.removeObserver(treeItemChildrenKey, this, this._itemChildrenDidChange);
+      if (treeItemIsExpandedKey) cachedItem.removeObserver(treeItemIsExpandedKey, this, this._itemIsExpandedDidChange);
+      if (treeItemChildrenKey) cachedItem.removeObserver(treeItemChildrenKey, this, this._itemChildrenDidChange);
 
       // Remove the cache.
       this._cachedItem = null;
@@ -836,8 +836,8 @@ SC.TreeItemObserver = SC.Object.extend(SC.Array, SC.CollectionContent, {
     }
     //@endif
 
-    item.addObserver(treeItemIsExpandedKey, this, this._itemIsExpandedDidChange);
-    item.addObserver(treeItemChildrenKey, this, this._itemChildrenDidChange);
+    if (treeItemIsExpandedKey) item.addObserver(treeItemIsExpandedKey, this, this._itemIsExpandedDidChange);
+    if (treeItemChildrenKey) item.addObserver(treeItemChildrenKey, this, this._itemChildrenDidChange);
 
     // Fire the observer functions once to initialize.
     this.beginPropertyChanges();
