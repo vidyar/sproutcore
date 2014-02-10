@@ -526,65 +526,65 @@ if (window.ProgressEvent) {
   });
 }
 
-test("Test upload event listeners on successful request.", function() {
-  var abort = false,
-    body = {},
-    error = false,
-    load = false,
-    loadend = false,
-    loadstart = false,
-    progress = false,
-    response,
-    status,
-    timeout = false;
+// test("Test upload event listeners on successful request.", function() {
+//   var abort = false,
+//     body = {},
+//     error = false,
+//     load = false,
+//     loadend = false,
+//     loadstart = false,
+//     progress = false,
+//     response,
+//     status,
+//     timeout = false;
 
-  // Use a POST request
-  request = SC.Request.postUrl('/');
+//   // Use a POST request
+//   request = SC.Request.postUrl('/');
 
-  request.notify("upload.loadstart", this, function(evt) {
-    loadstart = true;
-  });
+//   request.notify("upload.loadstart", this, function(evt) {
+//     loadstart = true;
+//   });
 
-  request.notify("upload.progress", this, function(evt) {
-    progress = true;
-  });
+//   request.notify("upload.progress", this, function(evt) {
+//     progress = true;
+//   });
 
-  request.notify("upload.load", this, function(evt) {
-    load = true;
-  });
+//   request.notify("upload.load", this, function(evt) {
+//     load = true;
+//   });
 
-  request.notify("upload.loadend", this, function(evt) {
-    loadend = true;
-  });
+//   request.notify("upload.loadend", this, function(evt) {
+//     loadend = true;
+//   });
 
-  request.notify(200, this, function(response) {
-    status = response.status;
+//   request.notify(200, this, function(response) {
+//     status = response.status;
 
-    if (window.ProgressEvent) {
-      ok(loadstart, "Received a loadstart event.");
-      ok(progress, "Received a progress event.");
-      ok(load, "Received a load event.");
-      ok(loadend, "Received a loadend event.");
-    }
-    ok(!abort, "Did not receive an abort event.");
-    ok(!error, "Did not receive an error event.");
-    ok(!timeout, "Did not receive a timeout event.");
-    equals(status, 200, "Received a response with status 200.");
+//     if (window.ProgressEvent) {
+//       ok(loadstart, "Received a loadstart event.");
+//       ok(progress, "Received a progress event.");
+//       ok(load, "Received a load event.");
+//       ok(loadend, "Received a loadend event.");
+//     }
+//     ok(!abort, "Did not receive an abort event.");
+//     ok(!error, "Did not receive an error event.");
+//     ok(!timeout, "Did not receive a timeout event.");
+//     equals(status, 200, "Received a response with status 200.");
 
-    window.start();
-  });
+//     window.start();
+//   });
 
-  // Make a significant body object.
-  // It looks that Firefox is not sending the progress event if the request is too small
-  var i;
-  for (i = 200000; i >= 0; i--) {
-    body['k' + i] = 'v' + i;
-  }
+//   // Make a significant body object.
+//   // It looks that Firefox is not sending the progress event if the request is too small
+//   var i;
+//   for (i = 200000; i >= 0; i--) {
+//     body['k' + i] = 'v' + i;
+//   }
 
-  stop(test_timeout); // stops the test runner - wait for response
+//   stop(test_timeout); // stops the test runner - wait for response
 
-  response = request.send(JSON.stringify(body));
-});
+//   response = request.send(JSON.stringify(body));
+// });
 
 
 test("Test manager.cancelAll.", function() {
